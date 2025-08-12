@@ -2,10 +2,10 @@
 
 pipeline {
     agent none
-     parameters{
-            choice(name: 'VERSION', choices: ['1.1.0','1.2.0'], description: '')
-            booleanParam(name: 'exectest' defaultValue: true, description: '')
-        }
+    parameters {
+        choice(name: 'VERSION', choices: ['1.1.0', '1.2.0'], description: '')
+        booleanParam(name: 'exectest', defaultValue: true, description: '')
+    }
     stages {
         stage('build') {
             steps {
@@ -15,12 +15,11 @@ pipeline {
             }
         }
         stage('test') {
-            when{
-                expression{
+            when {
+                expression {
                     params.exectest
                 }
             }
-
             steps {
                 script {
                     echo "Testing the application..."
@@ -31,7 +30,7 @@ pipeline {
             steps {
                 script {
                     echo "Deploying the application..."
-                    echo "deploying version ${params.VERSION}"
+                    echo "Deploying version ${params.VERSION}"
                 }
             }
         }
