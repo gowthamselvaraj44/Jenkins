@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 def gv
 pipeline {
-    agent none
+    agent any
     parameters {
         choice(name: 'VERSION', choices: ['1.1.0', '1.2.0'], description: '')
         booleanParam(name: 'exectest', defaultValue: true, description: '')
@@ -11,7 +11,7 @@ pipeline {
         stage('init') {
             steps {
                 script {
-                    gv=load script.groovy
+                    gv=load 'script.groovy'
                 }
             }
         }
