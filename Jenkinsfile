@@ -1,54 +1,32 @@
-#!/usr/bin/env groovy
-def gv
 pipeline {
     agent any
-    parameters {
-        choice(name: 'VERSION', choices: ['1.1.0', '1.2.0'], description: '')
-        booleanParam(name: 'exectest', defaultValue: true, description: '')
-    }
+	tools{
+	maven 'maven'
+}
     stages {
+        stage('Build Jar') {
+            steps {
+                echo 'Build package Application'
+		sh 'mvn package'
+            }
+        }
 
-        stage('init') {
+    stages {
+        stage('Build Image') {
             steps {
-                script {
-                    gv=load 'script.groovy'
-                }
+                echo 'Build docker image'
+		sh 'docker build -t gowthamdocker44/test:2.0 .'
+		sh "echo 'Gowtham@99' | docker login  -u 'gowthamdocker44' --password-stdin"
+		sh 'docker push gowthamdocker44/test:2.0'
             }
         }
-        
-        
-        stage('build') {
-            steps {
-                script {
-                    gv.buildApp()
-                }
-            }
-        }
-        stage('test') {
-            when {
-                expression {
-                    params.exectest
-                }
-            }
-            steps {
-                script {
-                   gv.testApp()
-                }
-            }
-        }
+
+    stages {
         stage('deploy') {
-            input {
-                message "select the deployment env"
-                ok "Done"
-                parameters {
-                    choice(name:'ENV', choices: ['dev','staging','prod'], description: 'for deployment purposes')
-                }
-            }
             steps {
-                script {
-                 gv.deployApp()
-                }
+                echo 'deployed in to docker hub'
             }
         }
+
     }
 }
